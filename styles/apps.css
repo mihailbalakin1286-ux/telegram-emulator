@@ -1,4 +1,758 @@
-/* Telegram Auth */
+/* ===== CALCULATOR ===== */
+.calc-display {
+    padding: 20px 16px;
+    text-align: right;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.calc-expression {
+    color: var(--android-text-secondary, #999);
+    font-size: 16px;
+    min-height: 24px;
+    word-break: break-all;
+}
+.calc-result {
+    color: var(--android-text, #fff);
+    font-size: 40px;
+    font-weight: 300;
+    word-break: break-all;
+}
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    padding: 1px;
+    flex: 1;
+}
+.calc-btn {
+    background: var(--android-surface, #1e1e1e);
+    border: none;
+    color: var(--android-text, #fff);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 16px;
+    transition: background 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.calc-btn:hover { background: rgba(255,255,255,0.08); }
+.calc-btn:active { background: rgba(255,255,255,0.15); }
+.calc-btn.clear { color: #e53935; }
+.calc-btn.operator { color: #4caf50; }
+.calc-btn.equals { background: #4caf50; color: #fff; }
+.calc-btn.equals:active { background: #388e3c; }
+
+/* ===== SETTINGS ===== */
+.settings-list {
+    padding: 8px 0;
+}
+.settings-section-title {
+    color: var(--android-primary, #4caf50);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 16px 16px 8px;
+}
+.settings-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.settings-item:hover { background: rgba(255,255,255,0.03); }
+.settings-item:active { background: rgba(255,255,255,0.06); }
+.settings-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.settings-item-text { flex: 1; }
+.settings-item-title {
+    color: var(--android-text, #fff);
+    font-size: 15px;
+}
+.settings-item-subtitle {
+    color: var(--android-text-secondary, #999);
+    font-size: 12px;
+    margin-top: 2px;
+}
+.settings-item-arrow {
+    color: var(--android-text-secondary, #999);
+    font-size: 18px;
+}
+
+/* ===== FILES ===== */
+.files-header {
+    padding: 16px;
+    color: var(--android-text, #fff);
+    font-size: 18px;
+    font-weight: 500;
+}
+.files-breadcrumb {
+    display: flex;
+    gap: 4px;
+    padding: 0 16px 12px;
+    color: var(--android-text-secondary, #999);
+    font-size: 12px;
+}
+.files-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 0 16px;
+}
+.file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 4px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.1s;
+}
+.file-item:hover { background: rgba(255,255,255,0.05); }
+.file-icon {
+    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.file-info { text-align: center; }
+.file-name {
+    color: var(--android-text, #fff);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+}
+.file-meta {
+    color: var(--android-text-secondary, #999);
+    font-size: 11px;
+}
+
+/* ===== PHONE ===== */
+.phone-dialer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+    height: 100%;
+}
+.phone-number-display {
+    color: var(--android-text, #fff);
+    font-size: 28px;
+    font-weight: 300;
+    min-height: 40px;
+    text-align: center;
+    word-break: break-all;
+    margin-bottom: 20px;
+}
+.phone-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+}
+.keypad-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.keypad-btn:hover { background: rgba(255,255,255,0.08); }
+.keypad-btn:active { background: rgba(255,255,255,0.15); }
+.keypad-number {
+    color: var(--android-text, #fff);
+    font-size: 24px;
+    line-height: 1;
+}
+.keypad-letters {
+    color: var(--android-text-secondary, #999);
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+.backspace-btn {
+    background: none;
+    border: none;
+    color: var(--android-text-secondary, #999);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 16px;
+    margin-top: 8px;
+}
+.call-btn {
+    background: #4caf50;
+    border: none;
+    color: #fff;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.1s;
+}
+.call-btn:active { background: #388e3c; }
+
+/* ===== MESSAGES (SMS) ===== */
+.messages-list {
+    padding: 0;
+}
+.message-thread {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.message-thread:hover { background: rgba(255,255,255,0.03); }
+.message-thread:active { background: rgba(255,255,255,0.06); }
+.message-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+.message-preview { flex: 1; min-width: 0; }
+.message-name {
+    color: var(--android-text, #fff);
+    font-size: 15px;
+    font-weight: 500;
+}
+.message-snippet {
+    color: var(--android-text-secondary, #999);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.message-time-badge { text-align: right; flex-shrink: 0; }
+.message-time {
+    color: var(--android-text-secondary, #999);
+    font-size: 12px;
+}
+.message-badge {
+    background: var(--android-primary, #4caf50);
+    color: #fff;
+    font-size: 11px;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    margin-top: 4px;
+}
+.chat-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--android-surface, #1e1e1e);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    min-height: 52px;
+}
+.chat-back-btn {
+    background: none;
+    border: none;
+    color: var(--android-text, #fff);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+.chat-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+.chat-contact-info { flex: 1; }
+.chat-contact-name {
+    color: var(--android-text, #fff);
+    font-size: 15px;
+    font-weight: 500;
+}
+.chat-contact-status {
+    color: var(--android-text-secondary, #999);
+    font-size: 12px;
+}
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.chat-bubble {
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 16px;
+    position: relative;
+    line-height: 1.35;
+}
+.chat-bubble.me {
+    align-self: flex-end;
+    background: var(--android-primary, #4caf50);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+.chat-bubble.them {
+    align-self: flex-start;
+    background: var(--android-surface, #333);
+    color: var(--android-text, #fff);
+    border-bottom-left-radius: 4px;
+}
+.chat-bubble-text { font-size: 14px; }
+.chat-typing {
+    align-self: flex-start;
+    background: var(--android-surface, #333);
+    border-radius: 12px;
+    padding: 8px 14px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+}
+.chat-typing.active { display: flex; }
+.chat-typing .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--android-text-secondary, #999);
+    border-radius: 50%;
+    animation: chatDot 1.4s infinite ease-in-out;
+}
+.chat-typing .dot:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing .dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes chatDot { 0%,60%,100% { opacity:0.3; } 30% { opacity:1; } }
+.chat-bubble-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    text-align: right;
+    margin-top: 2px;
+}
+.chat-input-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--android-surface, #1e1e1e);
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+.chat-input-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 16px;
+    color: var(--android-text, #fff);
+    font-size: 14px;
+    outline: none;
+}
+.chat-input-bar input::placeholder { color: var(--android-text-secondary, #666); }
+.chat-send-btn {
+    background: none;
+    border: none;
+    color: var(--android-primary, #4caf50);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* ===== CLOCK ===== */
+.clock-app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 20px;
+}
+.analog-clock {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 3px solid var(--android-text-secondary, #555);
+    position: relative;
+    background: var(--android-surface, #1a1a1a);
+}
+.clock-markers { position: absolute; width: 100%; height: 100%; }
+.clock-marker {
+    position: absolute;
+    width: 2px;
+    height: 8px;
+    background: var(--android-text-secondary, #666);
+    top: 6px;
+    left: 50%;
+    transform-origin: 50% 84px;
+}
+.clock-marker.major {
+    width: 3px;
+    height: 12px;
+    background: var(--android-text, #ccc);
+}
+.clock-hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 2px;
+}
+.hand-hour {
+    width: 3px;
+    height: 50px;
+    background: var(--android-text, #fff);
+    margin-left: -1.5px;
+}
+.hand-minute {
+    width: 2px;
+    height: 65px;
+    background: var(--android-text, #ccc);
+    margin-left: -1px;
+}
+.hand-second {
+    width: 1px;
+    height: 70px;
+    background: #e53935;
+    margin-left: -0.5px;
+}
+.clock-center {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #e53935;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+.digital-time {
+    color: var(--android-text, #fff);
+    font-size: 40px;
+    font-weight: 200;
+    font-family: monospace;
+}
+.digital-seconds {
+    color: var(--android-text-secondary, #999);
+    font-size: 20px;
+}
+
+/* ===== NOTES ===== */
+.notes-list {
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+.note-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.note-card:hover { background: rgba(255,255,255,0.1); }
+.note-card:active { background: rgba(255,255,255,0.14); }
+.note-title {
+    color: var(--android-text, #fff);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.note-preview {
+    color: var(--android-text-secondary, #999);
+    font-size: 12px;
+    line-height: 1.4;
+    max-height: 60px;
+    overflow: hidden;
+}
+.note-date {
+    color: var(--android-text-secondary, #666);
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+/* ===== EMAIL ===== */
+.email-list { padding: 0; }
+.email-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.email-item:hover { background: rgba(255,255,255,0.03); }
+.email-item:active { background: rgba(255,255,255,0.06); }
+.email-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+.email-content { flex: 1; min-width: 0; }
+.email-sender {
+    color: var(--android-text, #fff);
+    font-size: 14px;
+    font-weight: 500;
+}
+.email-subject {
+    color: var(--android-text, #ddd);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.email-snippet {
+    color: var(--android-text-secondary, #888);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+.email-meta { text-align: right; flex-shrink: 0; }
+.email-time {
+    color: var(--android-text-secondary, #999);
+    font-size: 11px;
+}
+.email-unread .email-sender { font-weight: 700; }
+.email-unread .email-subject { font-weight: 600; color: #fff; }
+
+/* ===== WEATHER ===== */
+.weather-app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    height: 100%;
+}
+.weather-main { text-align: center; margin-bottom: 20px; }
+.weather-icon-big { font-size: 64px; margin-bottom: 8px; }
+.weather-temp-big {
+    color: var(--android-text, #fff);
+    font-size: 48px;
+    font-weight: 200;
+}
+.weather-desc {
+    color: var(--android-text-secondary, #aaa);
+    font-size: 16px;
+    margin-top: 4px;
+}
+.weather-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.weather-detail {
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 12px 8px;
+}
+.weather-detail-label {
+    color: var(--android-text-secondary, #999);
+    font-size: 11px;
+}
+.weather-detail-value {
+    color: var(--android-text, #fff);
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+.weather-forecast {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+.forecast-day {
+    flex: 1;
+    min-width: 60px;
+    text-align: center;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 6px;
+}
+.forecast-name {
+    color: var(--android-text-secondary, #aaa);
+    font-size: 12px;
+}
+.forecast-icon { font-size: 20px; margin: 6px 0; }
+.forecast-temp {
+    color: var(--android-text, #fff);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ===== CAMERA ===== */
+.camera-viewfinder {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+}
+.camera-preview {
+    flex: 1;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    position: relative;
+    overflow: hidden;
+}
+.camera-grid-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+.camera-grid-line {
+    position: absolute;
+    background: rgba(255,255,255,0.15);
+}
+.camera-grid-line:nth-child(1) { top: 33.33%; left: 0; right: 0; height: 1px; }
+.camera-grid-line:nth-child(2) { top: 66.66%; left: 0; right: 0; height: 1px; }
+.camera-grid-line:nth-child(3) { left: 33.33%; top: 0; bottom: 0; width: 1px; }
+.camera-grid-line:nth-child(4) { left: 66.66%; top: 0; bottom: 0; width: 1px; }
+.camera-focus {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px; height: 60px;
+    border: 2px solid rgba(255,255,200,0.6);
+    border-radius: 50%;
+}
+.camera-modes {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px;
+    background: #000;
+}
+.camera-mode {
+    color: var(--android-text-secondary, #999);
+    font-size: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.camera-mode.active { color: #ffc107; }
+.camera-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 16px;
+    background: #000;
+}
+.camera-mode-btn {
+    color: var(--android-text, #fff);
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.camera-shutter {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.camera-shutter:active {
+    transform: scale(0.9);
+    background: rgba(255,255,255,0.5);
+}
+
+/* ===== GALLERY ===== */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    padding: 2px;
+}
+.gallery-item {
+    aspect-ratio: 1;
+    background: var(--android-surface, #222);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.15s;
+}
+.gallery-item:hover { opacity: 0.85; }
+.gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: var(--android-text-secondary, #555);
+}
+
+/* ===== TELEGRAM AUTH ===== */
 .tg-auth {
     width: 100%;
     height: 100%;
@@ -48,10 +802,8 @@
 .tg-auth-switch a:hover { text-decoration: underline; }
 .tg-auth-error { color: #e53935; font-size: 12px; margin-top: 10px; min-height: 16px; }
 
-/* Telegram Layout */
+/* ===== TELEGRAM LAYOUT ===== */
 .tg-layout { display: flex; width: 100%; height: 100%; background: #0e1621; }
-
-/* Sidebar */
 .tg-sidebar { width: 180px; background: #17212b; border-right: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; flex-shrink: 0; }
 .tg-sidebar-head { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); min-height: 44px; }
 .tg-search { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: #242f3d; margin: 6px 8px; border-radius: 16px; }
@@ -59,8 +811,6 @@
 .tg-search input { flex: 1; background: none; border: none; outline: none; color: #f5f5f5; font-size: 13px; }
 .tg-search input::placeholder { color: #7b8b9a; }
 .tg-chat-list { flex: 1; overflow-y: auto; }
-
-/* Chat items */
 .tg-chat-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; cursor: pointer; transition: background 0.1s; }
 .tg-chat-item:hover { background: rgba(255,255,255,0.03); }
 .tg-chat-item.active { background: #2b5278; }
@@ -75,16 +825,10 @@
 .tg-ci-bot { display: flex; justify-content: space-between; align-items: center; }
 .tg-ci-last { color: #7b8b9a; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
 .tg-unread { background: #2b5278; color: #fff; font-size: 11px; font-weight: 500; min-width: 20px; height: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 0 5px; flex-shrink: 0; margin-left: 6px; }
-
-/* Chat area */
 .tg-chat-area { flex: 1; display: flex; flex-direction: column; background: #0e1621; }
 .tg-empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-/* Message header */
 .tg-msg-header { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #17212b; border-bottom: 1px solid rgba(255,255,255,0.06); min-height: 44px; }
 .tg-msg-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 500; flex-shrink: 0; }
-
-/* Messages */
 .tg-messages { flex: 1; overflow-y: auto; padding: 8px 6px 4px; display: flex; flex-direction: column; gap: 2px; }
 .tg-date-sep { text-align: center; margin: 6px 0; }
 .tg-date-sep span { display: inline-block; background: rgba(0,0,0,0.35); color: #b0c4d8; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 10px; }
@@ -101,27 +845,19 @@
 .tg-check { font-size: 12px; }
 .tg-check.done { color: #5fb6f5; }
 .tg-check.sent { color: rgba(255,255,255,0.4); }
-
-/* Typing */
 .tg-typing { align-self: flex-start; background: #182533; border-radius: 10px; border-bottom-left-radius: 3px; padding: 8px 12px; margin-left: 3px; }
 .tg-typing-dots { display: flex; gap: 3px; }
 .tg-typing-dots span { width: 6px; height: 6px; background: #7b8b9a; border-radius: 50%; animation: tgDot 1.4s infinite ease-in-out; }
 .tg-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
 .tg-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes tgDot { 0%,60%,100% { opacity: 0.3; transform: scale(0.85); } 30% { opacity: 1; transform: scale(1.1); } }
-
-/* Input */
 .tg-input-bar { display: flex; align-items: center; gap: 5px; padding: 5px 6px; background: #17212b; border-top: 1px solid rgba(255,255,255,0.06); }
 .tg-input-bar input { flex: 1; padding: 8px 12px; background: #242f3d; border: none; border-radius: 18px; color: #f5f5f5; font-size: 14px; outline: none; }
 .tg-input-bar input::placeholder { color: #7b8b9a; }
 .tg-send-btn { width: 36px; height: 36px; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .tg-send-btn:active { transform: scale(0.9); }
-
-/* Icon button */
 .tg-icon-btn { width: 34px; height: 34px; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .tg-icon-btn:active { background: rgba(255,255,255,0.08); }
-
-/* New chat modal */
 .tg-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: center; justify-content: center; }
 .tg-modal { background: #17212b; border-radius: 10px; width: 240px; max-height: 70%; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
 .tg-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -129,8 +865,6 @@
 .tg-nc-user { display: flex; align-items: center; gap: 10px; padding: 8px 14px; cursor: pointer; transition: background 0.1s; }
 .tg-nc-user:hover { background: rgba(255,255,255,0.03); }
 .tg-nc-user:active { background: rgba(255,255,255,0.05); }
-
-/* Scrollbar */
 .tg-chat-list::-webkit-scrollbar,
 .tg-messages::-webkit-scrollbar,
 .tg-modal-list::-webkit-scrollbar { width: 4px; }
