@@ -143,16 +143,7 @@ app.use(session({
 }));
 
 // Static files
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/')) return next();
-    const filePath = path.join(ROOT, req.path === '/' ? 'index.html' : req.path);
-    const ext = path.extname(filePath).toLowerCase();
-    fs.readFile(filePath, (err, data) => {
-        if (err) { res.writeHead(404); res.end('404'); return; }
-        res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
-        res.end(data);
-    });
-});
+app.use(express.static(ROOT));
 
 // Auth middleware
 function requireAuth(req, res, next) {
