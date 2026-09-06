@@ -223,35 +223,283 @@ const Apps = {
     settings: {
         title: 'Настройки',
         icon: 'settings-icon',
+        currentView: 'main',
+        container: null,
+        wifiEnabled: true,
+        bluetoothEnabled: false,
+        airplaneMode: false,
+        doNotDisturb: false,
+        brightness: 70,
+        volume: 80,
+        ringVolume: 70,
+        darkMode: true,
+        locationEnabled: true,
+        nfcEnabled: false,
+        fontSize: 16,
+
         init(container) {
+            this.container = container;
+            this.showMain();
+        },
+
+        showMain() {
+            this.currentView = 'main';
             const items = [
-                { icon: '#2196f3', svg: '<path d="M12 12m-3.2 0a3.2 3.2 0 1 0 6.4 0a3.2 3.2 0 1 0-6.4 0M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z', title: 'Настройки сети', subtitle: 'Wi-Fi, Bluetooth, VPN' },
-                { icon: '#4caf50', svg: '<path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z', title: 'Уведомления', subtitle: 'Настройка уведомлений' },
-                { icon: '#ff9800', svg: '<path d="M20 15.31L23.31 12 20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z', title: 'Дисплей', subtitle: 'Яркость, тема, размер шрифта' },
-                { icon: '#9c27b0', svg: '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z', title: 'Звуки и вибрация', subtitle: 'Громкость, мелодии, вибрация' },
-                { icon: '#f44336', svg: '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z', title: 'Безопасность', subtitle: 'Блокировка, отпечаток, лицо' },
-                { icon: '#00bcd4', svg: '<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z', title: 'Дата и время', subtitle: 'Часовой пояс, формат времени' },
-                { icon: '#607d8b', svg: '<path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z', title: 'Система', subtitle: 'Язык, сброс, обновления' },
-                { icon: '#795548', svg: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z', title: 'О телефоне', subtitle: 'Android 14, модель, версия' },
+                { id: 'wifi', icon: '#2196f3', svg: '<path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>', title: 'Wi-Fi', sub: this.wifiEnabled ? 'Включено, Подключено' : 'Выключено', detail: 'Wi-Fi' },
+                { id: 'bluetooth', icon: '#2196f3', svg: '<path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"/>', title: 'Bluetooth', sub: this.bluetoothEnabled ? 'Включено' : 'Выключено', detail: 'Bluetooth' },
+                { id: 'display', icon: '#ff9800', svg: '<path d="M20 15.31L23.31 12 20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>', title: 'Дисплей', sub: 'Яркость, тема', detail: 'display' },
+                { id: 'sound', icon: '#9c27b0', svg: '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>', title: 'Звуки и вибрация', sub: 'Громкость: ' + this.volume + '%', detail: 'sound' },
+                { id: 'notif', icon: '#4caf50', svg: '<path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>', title: 'Уведомления', sub: 'Все приложения', detail: 'notif' },
+                { id: 'battery', icon: '#f44336', svg: '<path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/>', title: 'Батарея', sub: '78%', detail: 'battery' },
+                { id: 'storage', icon: '#607d8b', svg: '<path d="M2 20h20v-4H2v4zm2-3h2v2H4v-2zM2 4v4h20V4H2zm4 3H4V5h2v2zm-4 7h20v-4H2v4zm2-3h2v2H4v-2z"/>', title: 'Память', sub: '42 ГБ / 128 ГБ', detail: 'storage' },
+                { id: 'location', icon: '#00bcd4', svg: '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>', title: 'Местоположение', sub: this.locationEnabled ? 'Включено' : 'Выключено', detail: 'location' },
+                { id: 'security', icon: '#e91e63', svg: '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>', title: 'Безопасность', sub: 'Блокировка экрана', detail: 'security' },
+                { id: 'about', icon: '#795548', svg: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>', title: 'О телефоне', sub: 'Android 14, Model Emulator', detail: 'about' },
             ];
 
-            container.innerHTML = `
-                <div class="settings-list">
+            this.container.innerHTML = `
+                <div class="settings-list" style="overflow-y:auto;height:100%">
                     <div class="settings-section-title">Настройки</div>
                     ${items.map(item => `
-                        <div class="settings-item">
+                        <div class="settings-item" data-page="${item.detail}">
                             <div class="settings-item-icon" style="background:${item.icon}">
-                                <svg viewBox="0 0 24 24">${item.svg}</svg>
+                                <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#fff">${item.svg}</svg>
                             </div>
                             <div class="settings-item-text">
                                 <div class="settings-item-title">${item.title}</div>
-                                <div class="settings-item-subtitle">${item.subtitle}</div>
+                                <div class="settings-item-subtitle" id="sub-${item.id}">${item.sub}</div>
                             </div>
-                            <svg class="settings-item-arrow" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                            <svg class="settings-item-arrow" viewBox="0 0 24 24" style="width:20px;height:20px;fill:var(--android-text-secondary,#999)"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
                     `).join('')}
                 </div>
             `;
+
+            this.container.querySelectorAll('.settings-item').forEach(el => {
+                el.onclick = () => this.openPage(el.dataset.page);
+            });
+        },
+
+        header(title) {
+            return `
+                <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--android-surface,#1e1e1e);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0">
+                    <button class="settings-back" onclick="Apps.settings.showMain()" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%">
+                        <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:var(--android-text,#fff)"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    </button>
+                    <span style="color:var(--android-text,#fff);font-size:18px;font-weight:500">${title}</span>
+                </div>
+            `;
+        },
+
+        toggle(label, enabled, onChange) {
+            const id = 'sw-' + Math.random().toString(36).slice(2,8);
+            return `
+                <div class="settings-item" style="cursor:pointer" id="${id}">
+                    <div class="settings-item-text"><div class="settings-item-title">${label}</div></div>
+                    <div style="width:44px;height:24px;border-radius:12px;background:${enabled?'var(--android-primary,#4caf50)':'rgba(255,255,255,0.2)'};position:relative;transition:background 0.2s;cursor:pointer" class="toggle-switch" data-on="${enabled}">
+                        <div style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:${enabled?'22px':'2px'};transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+                    </div>
+                </div>
+            `;
+        },
+
+        slider(label, value, onChange) {
+            return `
+                <div style="padding:16px">
+                    <div style="color:var(--android-text,#fff);font-size:14px;margin-bottom:8px">${label}</div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:var(--android-text-secondary,#999)"><path d="M20 15.31L23.31 12 20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69z"/></svg>
+                        <input type="range" min="0" max="100" value="${value}" style="flex:1;accent-color:var(--android-primary,#4caf50)" class="settings-slider">
+                        <span style="color:var(--android-text,#fff);font-size:13px;min-width:30px;text-align:right">${value}%</span>
+                    </div>
+                </div>
+            `;
+        },
+
+        bindToggles() {
+            this.container.querySelectorAll('.toggle-switch').forEach(sw => {
+                sw.onclick = (e) => {
+                    e.stopPropagation();
+                    const on = sw.dataset.on === 'true';
+                    sw.dataset.on = (!on).toString();
+                    sw.style.background = on ? 'rgba(255,255,255,0.2)' : 'var(--android-primary,#4caf50)';
+                    sw.querySelector('div').style.left = on ? '2px' : '22px';
+                };
+            });
+            this.container.querySelectorAll('.settings-slider').forEach(sl => {
+                sl.oninput = (e) => {
+                    e.stopPropagation();
+                    sl.nextElementSibling.textContent = sl.value + '%';
+                };
+            });
+        },
+
+        openPage(page) {
+            this.currentView = page;
+            let html = '';
+            switch(page) {
+                case 'Wi-Fi':
+                case 'wifi':
+                    html = this.header('Wi-Fi') + `
+                        <div style="overflow-y:auto;flex:1">
+                            ${this.toggle('Wi-Fi', this.wifiEnabled)}
+                            ${this.wifiEnabled ? `
+                                <div style="padding:8px 16px;color:var(--android-text-secondary,#999);font-size:12px">Доступные сети</div>
+                                <div class="settings-item" style="cursor:pointer">
+                                    <div class="settings-item-icon" style="background:#4caf50"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div>
+                                    <div class="settings-item-text">
+                                        <div class="settings-item-title">HomeNetwork_5G</div>
+                                        <div class="settings-item-subtitle" style="color:#4caf50">Подключено</div>
+                                    </div>
+                                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#4caf50"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="settings-item" style="cursor:pointer">
+                                    <div class="settings-item-icon" style="background:var(--android-text-secondary,#666)"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div>
+                                    <div class="settings-item-text">
+                                        <div class="settings-item-title">Neighbors_WiFi</div>
+                                        <div class="settings-item-subtitle">Сохранена</div>
+                                    </div>
+                                </div>
+                                <div class="settings-item" style="cursor:pointer">
+                                    <div class="settings-item-icon" style="background:var(--android-text-secondary,#666)"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div>
+                                    <div class="settings-item-text">
+                                        <div class="settings-item-title">CoffeeShop_Free</div>
+                                        <div class="settings-item-subtitle">Открытая сеть</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>`;
+                    break;
+
+                case 'bluetooth':
+                    html = this.header('Bluetooth') + `
+                        <div style="overflow-y:auto;flex:1">
+                            ${this.toggle('Bluetooth', this.bluetoothEnabled)}
+                            ${this.bluetoothEnabled ? `
+                                <div style="padding:8px 16px;color:var(--android-text-secondary,#999);font-size:12px">Сопряжённые устройства</div>
+                                <div class="settings-item"><div class="settings-item-icon" style="background:#2196f3"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83z"/></svg></div><div class="settings-item-text"><div class="settings-item-title">AirPods Pro</div><div class="settings-item-subtitle">Подключено</div></div></div>
+                                <div class="settings-item"><div class="settings-item-icon" style="background:#666"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29z"/></svg></div><div class="settings-item-text"><div class="settings-item-title">Xiaomi Band 8</div><div class="settings-item-subtitle">Не подключено</div></div></div>
+                            ` : ''}
+                        </div>`;
+                    break;
+
+                case 'display':
+                    html = this.header('Дисплей') + `
+                        <div style="overflow-y:auto;flex:1">
+                            ${this.slider('Яркость', this.brightness)}
+                            ${this.toggle('Тёмная тема', this.darkMode)}
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Размер шрифта</div><div class="settings-item-subtitle">${this.fontSize}sp</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Автояркость</div><div class="settings-item-subtitle">Включена</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Спящий режим</div><div class="settings-item-subtitle">Через 30 секунд</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Масштаб экрана</div><div class="settings-item-subtitle">По умолчанию</div></div></div>
+                        </div>`;
+                    break;
+
+                case 'sound':
+                    html = this.header('Звуки и вибрация') + `
+                        <div style="overflow-y:auto;flex:1">
+                            ${this.slider('Музыка и видео', this.volume)}
+                            ${this.slider('Звонки и уведомления', this.ringVolume)}
+                            ${this.toggle('Не беспокоить', this.doNotDisturb)}
+                            ${this.toggle('Вибрация при звонке', true)}
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Мелодия звонка</div><div class="settings-item-subtitle">Default Ringtone</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Звук уведомлений</div><div class="settings-item-subtitle">Default Notification</div></div></div>
+                        </div>`;
+                    break;
+
+                case 'notif':
+                    html = this.header('Уведомления') + `
+                        <div style="overflow-y:auto;flex:1">
+                            ${this.toggle('Все уведомления', true)}
+                            ${this.toggle('Поп-up уведомления', true)}
+                            ${this.toggle('Значок уведомлений', true)}
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Telegram</div><div class="settings-item-subtitle">Разрешены</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">WhatsApp</div><div class="settings-item-subtitle">Разрешены</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Gmail</div><div class="settings-item-subtitle">Только важные</div></div></div>
+                        </div>`;
+                    break;
+
+                case 'battery':
+                    html = this.header('Батарея') + `
+                        <div style="overflow-y:auto;flex:1;padding:16px;text-align:center">
+                            <svg viewBox="0 0 24 24" style="width:64px;height:64px;fill:var(--android-primary,#4caf50)"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                            <div style="color:var(--android-text,#fff);font-size:36px;font-weight:300;margin:8px 0">78%</div>
+                            <div style="color:var(--android-text-secondary,#999);font-size:13px;margin-bottom:20px">Примерно 12 ч. осталось</div>
+                            <div style="background:rgba(255,255,255,0.1);border-radius:8px;height:8px;margin:0 20px;overflow:hidden"><div style="width:78%;height:100%;background:var(--android-primary,#4caf50);border-radius:8px"></div></div>
+                            <div style="padding:20px 0;text-align:left">
+                                <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Экономия заряда</div><div class="settings-item-subtitle">Выключена</div></div></div>
+                                <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Процент батареи</div><div class="settings-item-subtitle">Показывать</div></div></div>
+                                <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Использование</div><div class="settings-item-subtitle">Экран: 3ч 21м</div></div></div>
+                            </div>
+                        </div>`;
+                    break;
+
+                case 'storage':
+                    const used = 42, total = 128;
+                    html = this.header('Память') + `
+                        <div style="overflow-y:auto;flex:1;padding:16px">
+                            <div style="text-align:center;margin-bottom:20px">
+                                <div style="width:100px;height:100px;border-radius:50%;border:6px solid var(--android-primary,#4caf50);display:inline-flex;align-items:center;justify-content:center;position:relative">
+                                    <div style="color:var(--android-text,#fff);font-size:24px;font-weight:300">${used}<span style="font-size:14px"> ГБ</span></div>
+                                </div>
+                                <div style="color:var(--android-text-secondary,#999);font-size:13px;margin-top:8px">Из ${total} ГБ используется</div>
+                            </div>
+                            ${['Приложения: 18 ГБ','Фото и видео: 12 ГБ','Система: 8 ГБ','Другое: 4 ГБ'].map(s => `
+                                <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">${s.split(':')[0]}</div><div class="settings-item-subtitle">${s.split(':')[1]}</div></div></div>
+                            `).join('')}
+                        </div>`;
+                    break;
+
+                case 'location':
+                    html = this.header('Местоположение') + `
+                        <div style="overflow-y:auto;flex:1">
+                            ${this.toggle('Местоположение', this.locationEnabled)}
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Режим</div><div class="settings-item-subtitle">Высокая точность</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Последний доступ</div><div class="settings-item-subtitle">Google Maps — 2 мин. назад</div></div></div>
+                        </div>`;
+                    break;
+
+                case 'security':
+                    html = this.header('Безопасность') + `
+                        <div style="overflow-y:auto;flex:1">
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Блокировка экрана</div><div class="settings-item-subtitle">PIN-код</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Отпечаток пальца</div><div class="settings-item-subtitle">1 отпечаток</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Распознавание лица</div><div class="settings-item-subtitle">Включено</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Шифрование</div><div class="settings-item-subtitle">Включено</div></div></div>
+                            <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">Google Play Protect</div><div class="settings-item-subtitle">Активно</div></div></div>
+                        </div>`;
+                    break;
+
+                case 'about':
+                    html = this.header('О телефоне') + `
+                        <div style="overflow-y:auto;flex:1">
+                            <div style="text-align:center;padding:24px 0">
+                                <svg viewBox="0 0 24 24" style="width:48px;height:48px;fill:var(--android-primary,#4caf50)"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                                <div style="color:var(--android-text,#fff);font-size:18px;font-weight:500;margin-top:8px">Android Emulator</div>
+                            </div>
+                            ${[
+                                ['Модель','Emulator Phone'],
+                                ['Номер сборки','AE.240903.001'],
+                                ['Версия Android','14 (API 34)'],
+                                ['Версия ядра','5.15.131-android14'],
+                                ['Процессор','Snapdragon 8 Gen 3'],
+                                ['ОЗУ','8 ГБ'],
+                                ['IP-адрес','192.168.1.' + Math.floor(Math.random()*200+10)],
+                            ].map(([k,v]) => `
+                                <div class="settings-item"><div class="settings-item-text"><div class="settings-item-title">${k}</div><div class="settings-item-subtitle">${v}</div></div></div>
+                            `).join('')}
+                        </div>`;
+                    break;
+
+                default:
+                    this.showMain(); return;
+            }
+
+            this.container.innerHTML = html;
+            this.bindToggles();
+            this.container.querySelectorAll('.settings-back').forEach(btn => {
+                btn.onclick = () => this.showMain();
+            });
         }
     },
 
