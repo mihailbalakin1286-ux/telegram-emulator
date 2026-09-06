@@ -304,6 +304,95 @@ app.get('/proxy', (req, res) => {
     proxyFetch(target, res);
 });
 
+// === ADMIN API (без авторизации) ===
+app.get('/api/admin/stats', (req, res) => {
+    const userCount = db.exec("SELECT COUNT(*) FROM users");
+    const msgCount = db.exec("SELECT COUNT(*) FROM messages");
+    const onlineCount = db.exec("SELECT COUNT(*) FROM users WHERE online = 1");
+    res.json({
+        users: userCount.length ? userCount[0].values[0][0] : 0,
+        messages: msgCount.length ? msgCount[0].values[0][0] : 0,
+        online: onlineCount.length ? onlineCount[0].values[0][0] : 0,
+        uptime: Math.floor(process.uptime()) + 's'
+    });
+});
+
+app.get('/api/admin/users', (req, res) => {
+    const rows = db.exec("SELECT id, username, display_name, avatar_color, online, last_seen FROM users");
+    if (!rows.length) return res.json([]);
+    const users = rows[0].values.map(r => ({ id: r[0], username: r[1], display_name: r[2], avatar_color: r[3], online: r[4], last_seen: r[5] }));
+    res.json(users);
+});
+
+app.get('/api/admin/chats', (req, res) => {
+    const rows = db.exec(`
+        SELECT
+            CASE WHEN from_id < to_id THEN from_id ELSE to_id END as u1,
+            CASE WHEN from_id < to_id THEN to_id ELSE from_id END as u2,
+            COUNT(*) as msg_count,
+            MAX(text) as last_msg,
+            MAX(time) as last_time,
+            MAX(date) as last_date
+        FROM messages
+        GROUP BY u1, u2
+        ORDER BY MAX(id) DESC
+    `);
+    if (!rows.length) return res.json([]);
+    const chats = rows[0].values.map(r => {
+        const u1 = getUser(r[0]);
+        const u2 = getUser(r[1]);
+        return {
+            user1: u1 ? u1.display_name : '?',
+            user2: u2 ? u2.display_name : '?',
+            messages: r[2],
+            last_msg: r[3],
+            last_time: r[4],
+            last_date: r[5]
+        };
+    });
+    res.json(chats);
+});
+
+app.get('/api/admin/messages/:userId', (req, res) => {
+    const uid = parseInt(req.params.userId);
+    const rows = db.exec(`
+        SELECT m.id, m.from_id, m.to_id, m.text, m.time, m.date, m.status,
+               u1.display_name as from_name, u2.display_name as to_name
+        FROM messages m
+        LEFT JOIN users u1 ON m.from_id = u1.id
+        LEFT JOIN users u2 ON m.to_id = u2.id
+        WHERE m.from_id = ? OR m.to_id = ?
+        ORDER BY m.id ASC
+    `, [uid, uid]);
+    if (!rows.length) return res.json([]);
+    const msgs = rows[0].values.map(r => ({
+        id: r[0], from_id: r[1], to_id: r[2], text: r[3], time: r[4], date: r[5], status: r[6],
+        from_name: r[7], to_name: r[8]
+    }));
+    res.json(msgs);
+});
+
+app.get('/api/admin/all-messages', (req, res) => {
+    const limit = parseInt(req.query.limit) || 50;
+    const rows = db.exec(`
+        SELECT m.id, m.from_id, m.to_id, m.text, m.time, m.date, m.status,
+               u1.display_name as from_name, u2.display_name as to_name
+        FROM messages m
+        LEFT JOIN users u1 ON m.from_id = u1.id
+        LEFT JOIN users u2 ON m.to_id = u2.id
+        ORDER BY m.id DESC
+        LIMIT ${limit}
+    `);
+    if (!rows.length) return res.json([]);
+    const msgs = rows[0].values.map(r => ({
+        id: r[0], from_id: r[1], to_id: r[2], text: r[3], time: r[4], date: r[5], status: r[6],
+        from_name: r[7], to_name: r[8]
+    })).reverse();
+    res.json(msgs);
+});
+
+// === END ADMIN ===
+
 // Socket.IO
 const onlineUsers = new Map();
 
@@ -372,8 +461,22 @@ io.on('connection', (socket) => {
 async function start() {
     await initDB();
     server.listen(PORT, '0.0.0.0', () => {
-        console.log(`\n  Telegram Messenger running at:\n`);
-        console.log(`  http://localhost:${PORT}\n`);
+        console.log('');
+        console.log('  ========================================');
+        console.log('   Telegram Emulator Server');
+        console.log('  ========================================');
+        console.log('');
+        console.log('  URL: http://localhost:' + PORT);
+        console.log('');
+        console.log('  Admin API:');
+        console.log('    GET /api/admin/stats          - статистика');
+        console.log('    GET /api/admin/users          - все пользователи');
+        console.log('    GET /api/admin/chats          - все чаты');
+        console.log('    GET /api/admin/all-messages   - все сообщения');
+        console.log('    GET /api/admin/messages/:id   - сообщения юзера');
+        console.log('');
+        console.log('  ========================================');
+        console.log('');
     });
 }
 
