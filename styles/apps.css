@@ -1,3 +1,156 @@
+/* ===== BROWSER ===== */
+.browser-mode {
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+}
+.browser-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    background: var(--android-surface, #1e1e1e);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+.header-btn {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.1s;
+}
+.header-btn:hover { background: rgba(255,255,255,0.08); }
+.header-btn:active { background: rgba(255,255,255,0.15); }
+.browser-url-bar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 6px 12px;
+}
+.browser-url-bar svg { width: 16px; height: 16px; fill: var(--android-text-secondary, #999); flex-shrink: 0; }
+.browser-url-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--android-text, #fff);
+    font-size: 13px;
+}
+.browser-url-input::placeholder { color: var(--android-text-secondary, #666); }
+.browser-loading {
+    height: 3px;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.browser-loading-bar {
+    position: absolute;
+    top: 0; left: -40%;
+    width: 40%;
+    height: 100%;
+    background: var(--android-primary, #4caf50);
+    animation: browserLoad 1s ease-in-out infinite;
+}
+@keyframes browserLoad { 0% { left: -40%; } 100% { left: 100%; } }
+.browser-iframe-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+.browser-iframe-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+}
+.browser-homepage {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--android-bg, #121212);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 20px;
+}
+.browser-google-logo {
+    font-size: 36px;
+    font-weight: 400;
+    font-family: 'Product Sans', Arial, sans-serif;
+}
+.browser-search-box {
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.browser-search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 16px;
+    color: var(--android-text, #fff);
+    font-size: 14px;
+}
+.browser-search-input::placeholder { color: var(--android-text-secondary, #666); }
+.browser-search-btn {
+    background: none;
+    border: none;
+    color: var(--android-primary, #4caf50);
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.browser-search-btn:hover { background: rgba(255,255,255,0.05); }
+.browser-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 300px;
+    width: 100%;
+}
+.browser-shortcut {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.1s;
+}
+.browser-shortcut:hover { background: rgba(255,255,255,0.05); }
+.browser-shortcut:active { background: rgba(255,255,255,0.1); }
+.browser-shortcut-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
+.browser-shortcut span {
+    color: var(--android-text-secondary, #aaa);
+    font-size: 11px;
+}
+
 /* ===== CALCULATOR ===== */
 .calc-display {
     padding: 20px 16px;
