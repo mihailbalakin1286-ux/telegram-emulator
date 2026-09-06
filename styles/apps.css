@@ -794,6 +794,7 @@
 }
 
 /* ===== CAMERA ===== */
+@keyframes camFlash { from { opacity: 1; } to { opacity: 0; } }
 .camera-viewfinder {
     position: relative;
     width: 100%;

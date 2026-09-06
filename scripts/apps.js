@@ -1018,26 +1018,65 @@ const Apps = {
     camera: {
         title: 'Камера',
         icon: 'camera-icon',
+        stream: null,
+        facingMode: 'environment',
+        photos: [],
+
         init(container) {
-            container.innerHTML = `
+            this.container = container;
+            this.render();
+            this.startCamera();
+        },
+
+        destroy() {
+            this.stopCamera();
+        },
+
+        stopCamera() {
+            if (this.stream) {
+                this.stream.getTracks().forEach(t => t.stop());
+                this.stream = null;
+            }
+        },
+
+        async startCamera() {
+            try {
+                this.stopCamera();
+                this.stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: this.facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } },
+                    audio: false
+                });
+                const video = this.container.querySelector('#camera-video');
+                if (video) {
+                    video.srcObject = this.stream;
+                    video.play();
+                }
+                const err = this.container.querySelector('#camera-error');
+                if (err) err.style.display = 'none';
+            } catch (e) {
+                const err = this.container.querySelector('#camera-error');
+                if (err) { err.style.display = 'flex'; err.textContent = 'Камера недоступна: ' + e.message; }
+            }
+        },
+
+        render() {
+            this.container.innerHTML = `
                 <div class="camera-viewfinder">
-                    <div class="camera-preview" id="camera-preview">
-                        <div class="camera-grid-overlay">
-                            ${Array(9).fill('<div class="camera-grid-line"></div>').join('')}
-                        </div>
-                        <div class="camera-focus"></div>
-                        <div id="camera-flash"></div>
+                    <div class="camera-preview" id="camera-preview" style="display:flex;align-items:center;justify-content:center;background:#000">
+                        <video id="camera-video" style="width:100%;height:100%;object-fit:cover;display:block" autoplay playsinline muted></video>
+                        <div class="camera-grid-overlay">${Array(9).fill('<div class="camera-grid-line"></div>').join('')}</div>
+                        <div id="camera-error" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:13px;text-align:center;padding:20px;background:rgba(0,0,0,0.6);border-radius:8px"></div>
                     </div>
                 </div>
                 <div class="camera-modes">
-                    <span class="camera-mode">Видео</span>
-                    <span class="camera-mode active">Фото</span>
-                    <span class="camera-mode">Портрет</span>
-                    <span class="camera-mode">Ночной</span>
+                    <button class="camera-mode" data-mode="video">Видео</button>
+                    <button class="camera-mode active" data-mode="photo">Фото</button>
+                    <button class="camera-mode" data-mode="portrait">Портрет</button>
                 </div>
                 <div class="camera-controls">
                     <button class="camera-mode-btn" id="camera-gallery-btn">
-                        <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                        <canvas id="camera-last" style="width:32px;height:32px;border-radius:6px;display:none"></canvas>
+                        <svg id="camera-gallery-icon" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
                     </button>
                     <button class="camera-shutter" id="camera-shutter"></button>
                     <button class="camera-mode-btn" id="camera-switch">
@@ -1046,19 +1085,53 @@ const Apps = {
                 </div>
             `;
 
-            container.querySelector('#camera-shutter').addEventListener('click', () => {
-                const flash = container.querySelector('#camera-flash');
-                flash.classList.add('flash');
-                setTimeout(() => flash.classList.remove('flash'), 500);
-                Utils.showToast('Фото сохранено');
-            });
-
-            container.querySelectorAll('.camera-mode').forEach(m => {
+            this.container.querySelector('#camera-shutter').addEventListener('click', () => this.takePhoto());
+            this.container.querySelector('#camera-switch').addEventListener('click', () => this.switchCamera());
+            this.container.querySelectorAll('.camera-mode').forEach(m => {
                 m.addEventListener('click', () => {
-                    container.querySelectorAll('.camera-mode').forEach(x => x.classList.remove('active'));
+                    this.container.querySelectorAll('.camera-mode').forEach(x => x.classList.remove('active'));
                     m.classList.add('active');
                 });
             });
+        },
+
+        async switchCamera() {
+            this.facingMode = this.facingMode === 'environment' ? 'user' : 'environment';
+            await this.startCamera();
+        },
+
+        takePhoto() {
+            const video = this.container.querySelector('#camera-video');
+            if (!video || !video.srcObject) { Utils.showToast('Камера не активна'); return; }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+
+            if (this.facingMode === 'user') {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+            ctx.drawImage(video, 0, 0);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+            this.photos.push({ src: dataUrl, date: new Date() });
+
+            const lastCanvas = this.container.querySelector('#camera-last');
+            const lastIcon = this.container.querySelector('#camera-gallery-icon');
+            if (lastCanvas) {
+                lastCanvas.style.display = 'block';
+                lastCanvas.getContext('2d').drawImage(canvas, 0, 0, 32, 32);
+            }
+            if (lastIcon) lastIcon.style.display = 'none';
+
+            const flash = document.createElement('div');
+            flash.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:#fff;z-index:10;animation:camFlash 0.3s ease forwards;pointer-events:none';
+            this.container.querySelector('#camera-preview').appendChild(flash);
+            setTimeout(() => flash.remove(), 300);
+
+            Utils.showToast('Фото сохранено (' + this.photos.length + ')');
         }
     },
 
